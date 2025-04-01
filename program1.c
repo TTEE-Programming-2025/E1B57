@@ -38,7 +38,7 @@ int main(void)
 		/*步驟4 處理字元輸入*/
 		char inch;
 		printf("請輸入一個字元\n");
-		scanf(" %c",&inch);
+		scanf(" %c",&inch);   /*雙引號前面加上一個空格避免讀到\n*/
 		if(inch>='A' && inch<='Z')
 		 printf("Uppercase\n");
 		else if(inch>='a' && inch<='z')

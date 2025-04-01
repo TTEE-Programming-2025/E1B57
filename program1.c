@@ -43,7 +43,7 @@ int main(void)
 		 printf("Uppercase\n");
 		else if(inch>='a' && inch<='z')
 	  	 printf("Lowercase\n");
-		else if(inch>='0' && inch<='9')
+		else if(inch>='0' && inch<='9')   /*輸入是字元所以0和9要加上單引號*/
 	  	 printf("Digit\n");
 	  	else
 	  	 printf("E1B57陳逸安\n");

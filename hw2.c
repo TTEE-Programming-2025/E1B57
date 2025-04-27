@@ -3,6 +3,7 @@
 #include<unistd.h>
 #define password 2025
 #define maxpasswordtry 3
+void menu(void);
 void funcA(void);
 int main(void)
 { 
@@ -39,25 +40,23 @@ int main(void)
 			//步驟二 螢幕出現主選單 
 			usleep(500000);
 			system("cls");
-			printf("*****************主選單*****************\n");
-			printf("| a. 畫出直角三角形\n");
-			printf("| b. 顯示乘法表\n");
-			printf("| c. 結束\n");
-			printf("*****************主選單*****************\n");
-			printf("\n");
-			//步驟三 直角三角形
-			char choice;
-			printf("請輸入您的選擇 (a/b/c): \n");
-			scanf(" %c",&choice);
-			switch(choice)
-			{
-				case 'A':
-				case 'a':
-				 funcA(); 
-				 break; 
-
-			}
 			
+			while(1)
+			{ 
+			    menu();
+			    char choice;
+	            printf("請輸入您的選擇 (A,a/B,b/C,c): \n");
+            	scanf(" %c",&choice);
+		        //步驟三 直角三角形
+		     	switch(choice)
+		    	{
+			    	case 'A':
+			    	case 'a':
+			    	 funcA(); 
+			    	 break; 
+
+		    	}
+			} 
 			
 			
 			
@@ -89,6 +88,16 @@ int main(void)
 	return 0;
 }
 
+void menu(void)
+{
+	printf("*****************主選單*****************\n");
+	printf("| a. 畫出直角三角形\n");
+	printf("| b. 顯示乘法表\n");
+	printf("| c. 結束\n");
+	printf("*****************主選單*****************\n");
+	printf("\n");
+}
+
 void funcA(void)
 {
 	int i,j,k;
@@ -97,23 +106,35 @@ void funcA(void)
 	printf("請輸入一個 'a' 到 'n' 的字元\n");
 	scanf(" %c",&input);
 	int height=(input-'a'+1);
-	if((input>='a')&&(input<='n'))
+	while(1)
 	{
-		for(i=1;i<=height;i++)
-		{
-		  for(j=1;j<=(height-i);j++)
-		  {
-		  printf(" ");
-		  }
+		if((input>='a')&&(input<='n'))
+	    {
+		    for(i=1;i<=height;i++)
+		    {
+		        for(j=1;j<=(height-i);j++)
+		        {
+		            printf(" ");
+		        }
 		  
-		  for(j=1;j<=i;j++)
-		  {
-		  printf("*");
-		  }
-		  printf("\n");
-		}
-		 
-		
-	}
+		        for(j=1;j<=i;j++)
+		        {
+		            printf("%c",input-i+j);
+		        }
+		        printf("\n");
+	   	    } 
+		    printf("按下任意鍵回到主選單\n");
+		    fflush(stdin);
+	        getchar();
+	        system("cls");
+	        return;
+        }
+         
+	    else
+	    {
+	 	    printf("輸入字元不在 'a' 到 'n' 之間\n");
+	 	    printf("請重新輸入\n");
+	    }
+    }
 }
-//完成主選單，並輸出*做成的直角三角形 
+//把直角三角形改成abc，結束後回到主選單，並把主選單做成函式 

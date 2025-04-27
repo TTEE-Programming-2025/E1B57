@@ -34,6 +34,9 @@ int main(void)
 		if(inputpass==password)
 		 {
 			printf("密碼正確!\n");
+			
+			
+			
 			break;
 		 }	
 		 
@@ -41,6 +44,11 @@ int main(void)
 		printf("請再輸入密碼 (預設: %d):\n",password);
 	    scanf(" %d",&inputpass);
 	    
+	    if(inputpass==password)
+	     {
+	    	i=1;
+	    	continue;
+		 }
 	}
 	
     if(inputpass!=password)
@@ -54,4 +62,4 @@ int main(void)
 	return 0;
 }
 
-//完成個人風格畫面和輸入密碼 
+//修正前兩次密碼錯誤，第三次正確時，不會顯示"密碼正確"的問題 

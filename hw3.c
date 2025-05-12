@@ -36,7 +36,7 @@ void displayPersonalScreen() {
     printf("\nPlease enter the 4-digit password (default: %s): ", PASSWORD);
 }
 
-// Function to clear the screen (platform-dependent)
+// Function to clear the screen
 void clearScreen() {
     system("cls");
 }
@@ -92,12 +92,122 @@ void viewAvailableSeats(char seats[ROWS][COLS]) {
     getchar(); // Wait for the user to press a key
 }
 
+// Function to find consecutive empty seats
+int findConsecutiveEmpty(char seats[ROWS][COLS], int numSeats, int *startRow, int *startCol, int direction) {
+    // direction: 0 for horizontal, 1 for vertical
+    if (direction == 0) { // Horizontal
+        for (int i = 0; i < ROWS; i++) {
+            for (int j = 0; j <= COLS - numSeats; j++) {
+                int emptyCount = 0;
+                for (int k = 0; k < numSeats; k++) {
+                    if (seats[i][j + k] == '-') {
+                        emptyCount++;
+                    }
+                }
+                if (emptyCount == numSeats) {
+                    *startRow = i;
+                    *startCol = j;
+                    return 1; // Found consecutive empty seats
+                }
+            }
+        }
+    } else { // Vertical
+        for (int j = 0; j < COLS; j++) {
+            for (int i = 0; i <= ROWS - numSeats; i++) {
+                int emptyCount = 0;
+                for (int k = 0; k < numSeats; k++) {
+                    if (seats[i + k][j] == '-') {
+                        emptyCount++;
+                    }
+                }
+                if (emptyCount == numSeats) {
+                    *startRow = i;
+                    *startCol = j;
+                    return 1; // Found consecutive empty seats
+                }
+            }
+        }
+    }
+    return 0; // No consecutive empty seats found
+}
+
+// Function to handle automatic seat arrangement
+void arrangeSeats(char seats[ROWS][COLS]) {
+    int numSeats;
+    printf("Enter the number of seats needed (1-4): ");
+    if (scanf("%d", &numSeats) != 1) {
+        printf("Invalid input. Please enter a number between 1 and 4.\n");
+        while (getchar() != '\n'); // Clear the input buffer
+        return;
+    }
+    while (getchar() != '\n'); // Consume the newline character
+
+    if (numSeats < 1 || numSeats > 4) {
+        printf("Invalid number of seats. Please enter a number between 1 and 4.\n");
+        return;
+    }
+
+    char suggestedSeats[ROWS][COLS];
+    // Copy the current seats arrangement
+    for (int i = 0; i < ROWS; i++) {
+        for (int j = 0; j < COLS; j++) {
+            suggestedSeats[i][j] = seats[i][j];
+        }
+    }
+
+    int startRow, startCol;
+    int found = 0;
+
+    // Try to find consecutive empty seats horizontally first
+    if (findConsecutiveEmpty(suggestedSeats, numSeats, &startRow, &startCol, 0)) {
+        for (int i = 0; i < numSeats; i++) {
+            suggestedSeats[startRow][startCol + i] = '@'; // Mark as suggested
+        }
+        found = 1;
+    } else if (findConsecutiveEmpty(suggestedSeats, numSeats, &startRow, &startCol, 1)) { // Then try vertically
+        for (int i = 0; i < numSeats; i++) {
+            suggestedSeats[startRow + i][startCol] = '@'; // Mark as suggested
+        }
+        found = 1;
+    }
+
+    clearScreen();
+    printf("----------[Suggested Seats]----------\n");
+    if (found) {
+        displaySeats(suggestedSeats);
+        char choice;
+        printf("\nDo you accept this arrangement? (y/n): ");
+        choice = getchar();
+        while (getchar() != '\n'); // Consume the newline character
+
+        if (tolower(choice) == 'y') {
+            // Confirm the booking
+            for (int i = 0; i < ROWS; i++) {
+                for (int j = 0; j < COLS; j++) {
+                    if (suggestedSeats[i][j] == '@') {
+                        seats[i][j] = '*'; // Mark as booked
+                    }
+                }
+            }
+            printf("Seats booked successfully. Press any key to return to the main menu...\n");
+        } else {
+            printf("Arrangement rejected. Press any key to return to the main menu...\n");
+        }
+        fflush(stdin);
+        getchar(); // Wait for key press
+    } else {
+        printf("Could not find suitable seats for %d people. Press any key to return to the main menu...\n", numSeats);
+        fflush(stdin);
+        getchar(); // Wait for key press
+    }
+}
+
 int main() {
     // Initialize seats array with all seats as empty
     char seats[ROWS][COLS];
     for (int i = 0; i < ROWS; i++) {
         for (int j = 0; j < COLS; j++) {
-            seats[i][j] = '-'; // Initialize all seats as empty with '-' 
+            seats[i][j] = '-'; // Initialize all seats as empty with '-'
         }
     }
     initializeBookedSeats(seats);
@@ -124,7 +234,7 @@ int main() {
             while (getchar() != '\n'); // Clear buffer
             tries++;
         }
-        clearScreen();
+     clearScreen();
     }
 
     if (tries == MAX_TRIES) {
@@ -142,6 +252,9 @@ int main() {
             case 'a':
                 viewAvailableSeats(seats);
                 break;
+            case 'b':
+                arrangeSeats(seats);
+                break;
             case 'd':
                 printf("Exiting program.\n");
                 exit(0); // Correctly exit the program
@@ -155,5 +268,4 @@ int main() {
 
     return 0;
 }
-/*讓程式能夠隨機產生10個已預訂的座位。
-  並完成主選單的a選項，提供查看目前座位狀況的功能。 */ 
+/*完成主選單的b選項，讓程式能根據使用者需要的座位數量嘗試自動安排座位。*/

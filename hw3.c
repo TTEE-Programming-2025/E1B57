@@ -13,30 +13,30 @@
 
 // Function to display a personalized screen
 void displayPersonalScreen() {
-printf("************************************\n");
-printf("* *\n");
-printf("* *\n");
-printf("* *\n");
-printf("* programming homework 3\n");
-printf("* *\n");
-printf("* *\n");
-printf("* *\n");
-printf("* Welcome to My Booking System\n");
-printf("* *\n");
-printf("* *\n");
-printf("* Developed with C Language\n");
-printf("* *\n");
-printf("* *\n");
-printf("* *\n");
-printf("* Enjoy the experience!\n");
-printf("* *\n");
-printf("* *\n");
-printf("* *\n");
-printf("************************************\n");
+	printf("************************************\n");
+	printf("* *\n");
+	printf("* *\n");
+	printf("* *\n");
+	printf("* programming homework 3\n");
+	printf("* *\n");
+	printf("* *\n");
+	printf("* *\n");
+	printf("* Welcome to My Booking System\n");
+	printf("* *\n");
+	printf("* *\n");
+	printf("* Developed with C Language\n");
+	printf("* *\n");
+	printf("* *\n");
+	printf("* *\n");
+	printf("* Enjoy the experience!\n");
+	printf("* *\n");
+	printf("* *\n");
+	printf("* *\n");
+	printf("************************************\n");
     printf("\nPlease enter the 4-digit password (default: %s): ", PASSWORD);
 }
 
-// Function to clear the screen
+// Function to clear the screen (platform-dependent)
 void clearScreen() {
     system("cls");
 }
@@ -44,10 +44,10 @@ void clearScreen() {
 // Function to display the main menu
 void displayMainMenu() {
     printf("----------[Booking System]----------\n");
-    printf("| a. Available seats             |\n");
-    printf("| b. Arrange for you             |\n");
-    printf("| c. Choose by yourself          |\n");
-    printf("| d. Exit                        |\n");
+    printf("| a. Available seats                 |\n");
+    printf("| b. Arrange for you                 |\n");
+    printf("| c. Choose by yourself            |\n");
+    printf("| d. Exit                            |\n");
     printf("------------------------------------\n");
     printf("Enter your choice: ");
 }
@@ -68,14 +68,39 @@ void displaySeats(char seats[ROWS][COLS]) {
     }
 }
 
+// Function to randomly initialize some booked seats
+void initializeBookedSeats(char seats[ROWS][COLS]) {
+    srand(time(NULL));
+    int bookedCount = 0;
+    while (bookedCount < 10) {
+        int row = rand() % ROWS;
+        int col = rand() % COLS;
+        if (seats[row][col] == '-') {
+            seats[row][col] = '*';
+            bookedCount++;
+        }
+    }
+}
+
+// Function to handle displaying available seats
+void viewAvailableSeats(char seats[ROWS][COLS]) {
+    clearScreen();
+    printf("----------[Available Seats]----------\n");
+    displaySeats(seats);
+    printf("\nPress any key to return to the main menu...\n");
+    fflush(stdin);
+    getchar(); // Wait for the user to press a key
+}
+
 int main() {
     // Initialize seats array with all seats as empty
     char seats[ROWS][COLS];
     for (int i = 0; i < ROWS; i++) {
         for (int j = 0; j < COLS; j++) {
-            seats[i][j] = '-'; // Initialize all seats as empty with ASCII hyphen character
+            seats[i][j] = '-'; // Initialize all seats as empty with '-' 
         }
     }
+    initializeBookedSeats(seats);
 
     // Password authentication
     int tries = 0;
@@ -92,11 +117,10 @@ int main() {
             } else {
                 tries++;
                 printf("Incorrect password. %d tries remaining.\n", MAX_TRIES - tries);
-                // Wait for a short time before the next attempt
-                usleep(500000); // delay
+                usleep(500000); // Delay for 0.5 seconds
             }
         } else {
-            printf("Invalid input.\n");
+            printf("Invalid input. Please enter a 4-digit password.\n");
             while (getchar() != '\n'); // Clear buffer
             tries++;
         }
@@ -114,20 +138,22 @@ int main() {
         displayMainMenu();
         choice = getchar();
         while (getchar() != '\n'); // Clear buffer
-        if (tolower(choice) == 'd') {
-            printf("Exiting program.\n");
-            break;
-        } else {
-            printf("Invalid choice. Press any button to continue.\n");
-            fflush(stdin);
-            getchar(); // Wait for key press
+        switch (tolower(choice)) {
+            case 'a':
+                viewAvailableSeats(seats);
+                break;
+            case 'd':
+                printf("Exiting program.\n");
+                exit(0); // Correctly exit the program
+            default:
+                printf("Invalid choice. Press any key to continue.\n");
+                fflush(stdin);
+                getchar(); // Wait for key press
         }
         clearScreen();
     } while (1);
 
     return 0;
 }
-/*建立了程式的基本骨架。顯示歡迎畫面、清除螢幕、顯示主選單和顯示座位的函式。
-  main 函式中包含了座位表的初始化，密碼驗證流程。
-  此階段的主選單僅有d選項能用。 */
-  
+/*讓程式能夠隨機產生10個已預訂的座位。
+  並完成主選單的a選項，提供查看目前座位狀況的功能。 */ 

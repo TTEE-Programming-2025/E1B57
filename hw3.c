@@ -3,7 +3,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <conio.h>
-#include <unistd.h>
+#include <unistd.h> 
 #include <time.h>
 
 #define ROWS 9
@@ -36,7 +36,7 @@ void displayPersonalScreen() {
     printf("\nPlease enter the 4-digit password (default: %s): ", PASSWORD);
 }
 
-// Function to clear the screen
+// Function to clear the screen (platform-dependent)
 void clearScreen() {
     system("cls");
 }
@@ -202,6 +202,63 @@ void arrangeSeats(char seats[ROWS][COLS]) {
     }
 }
 
+// Function to handle manual seat selection
+void chooseSeats(char seats[ROWS][COLS]) {
+    int numSeats;
+    printf("Enter the number of seats you want to book: ");
+    if (scanf("%d", &numSeats) != 1) {
+        printf("Invalid input. Please enter a number.\n");
+        while (getchar() != '\n'); // Clear the input buffer
+        return;
+    }
+    while (getchar() != '\n'); // Consume the newline character
+
+    if (numSeats < 1) {
+        printf("Please enter a positive number of seats.\n");
+        return;
+    }
+
+    clearScreen();
+    printf("----------[Choose Seats]----------\n");
+    displaySeats(seats);
+    printf("\nInstructions: Enter the row and column number (e.g., 1 2) for each seat you want to book.\n");
+
+    int bookedCount = 0;
+    while (bookedCount < numSeats) {
+        int row, col;
+        printf("Enter row and column for seat %d (or 0 0 to finish): ", bookedCount + 1);
+        if (scanf("%d %d", &row, &col) != 2) {
+            printf("Invalid input. Please enter row and column numbers.\n");
+            while (getchar() != '\n'); // Clear the input buffer
+            continue;
+        }
+        while (getchar() != '\n'); // Consume the newline character
+
+        if (row == 0 && col == 0) {
+            break; // User finished selecting seats
+        }
+
+        if (row >= 1 && row <= ROWS && col >= 1 && col <= COLS) {
+            if (seats[row - 1][col - 1] == '-') {
+                seats[row - 1][col - 1] = '*'; // Mark as booked
+                printf("Seat %d-%d booked.\n", row, col);
+                bookedCount++;
+                displaySeats(seats); // Update the displayed seats
+            } else if (seats[row - 1][col - 1] == '*') {
+                printf("Seat %d-%d is already booked. Please choose another seat.\n", row, col);
+            } else {
+                printf("Invalid seat. Please enter a valid row (1-%d) and column (1-%d).\n", ROWS, COLS);
+            }
+        } else {
+            printf("Invalid row or column. Please enter row (1-%d) and column (1-%d).\n", ROWS, COLS);
+        }
+    }
+
+    printf("Finished booking %d seats. Press any key to return to the main menu...\n", bookedCount);
+    fflush(stdin);
+    getchar(); // Wait for key press
+}
+
 int main() {
     // Initialize seats array with all seats as empty
     char seats[ROWS][COLS];
@@ -234,7 +291,7 @@ int main() {
             while (getchar() != '\n'); // Clear buffer
             tries++;
         }
-     clearScreen();
+        clearScreen();
     }
 
     if (tries == MAX_TRIES) {
@@ -255,6 +312,9 @@ int main() {
             case 'b':
                 arrangeSeats(seats);
                 break;
+            case 'c':
+                chooseSeats(seats);
+                break;
             case 'd':
                 printf("Exiting program.\n");
                 exit(0); // Correctly exit the program
@@ -268,4 +328,5 @@ int main() {
 
     return 0;
 }
-/*完成主選單的b選項，讓程式能根據使用者需要的座位數量嘗試自動安排座位。*/
+/*完成主選單的c選項，讓程式有手動選擇座位的功能。
+  每次成功預訂座位後，座位表都會更新。 */

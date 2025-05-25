@@ -245,6 +245,54 @@ void displayStudentGrades() {
     getchar();
 }
 
+// 功能c: 搜尋學生成績
+void searchStudentGrades() {
+    clearScreen();
+    
+    if (studentCount == 0) {
+        printf("目前沒有學生資料！請先輸入學生成績。\n");
+        printf("按任意鍵返回主選單...");
+        getchar();
+        return;
+    }
+    
+    char searchName[50];
+    
+    // 加入空白檢查的搜尋姓名輸入
+    do {
+        printf("請輸入要搜尋的學生姓名: ");
+        fgets(searchName, sizeof(searchName), stdin);
+        searchName[strcspn(searchName, "\n")] = 0; // 移除換行符
+        
+        if (isEmptyOrWhitespace(searchName)) {
+            printf("搜尋姓名不能為空白！請重新輸入。\n");
+        }
+    } while (isEmptyOrWhitespace(searchName));
+    
+    int found = 0;
+    for (int i = 0; i < studentCount; i++) {
+        if (strcmp(students[i].name, searchName) == 0) {
+            printf("\n========== 搜尋結果 ==========\n");
+            printf("姓名: %s\n", students[i].name);
+            printf("學號: %d\n", students[i].studentId);
+            printf("數學成績: %d\n", students[i].math);
+            printf("物理成績: %d\n", students[i].physics);
+            printf("英文成績: %d\n", students[i].english);
+            printf("平均成績: %.1f\n", students[i].average);
+            printf("============================\n");
+            found = 1;
+            break;
+        }
+    }
+    
+    if (!found) {
+        printf("\n找不到姓名為 '%s' 的學生資料！\n", searchName);
+    }
+    
+    printf("按任意鍵返回主選單...");
+    getchar();
+}
+
 // 主程式
 int main() {
     // 顯示個人風格畫面
@@ -278,10 +326,16 @@ int main() {
                 displayStudentGrades();
                 break;
                 
+            case 'c':
+            case 'C':
+                searchStudentGrades();
+                break;
+                
+                
         }
     }
     
     return 0;
 }
 
-/*完成b選項*/
+/*完成c選項*/

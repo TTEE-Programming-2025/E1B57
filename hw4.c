@@ -293,6 +293,67 @@ void searchStudentGrades() {
     getchar();
 }
 
+// 功能d: 成績排名（使用氣泡排序法）
+void gradeRanking() {
+    clearScreen();
+    
+    if (studentCount == 0) {
+        printf("目前沒有學生資料！請先輸入學生成績。\n");
+        printf("按任意鍵返回主選單...");
+        getchar();
+        return;
+    }
+    
+    // 建立一個暫時陣列來排序，避免影響原始資料
+    Student tempStudents[MAX_STUDENTS];
+    for (int i = 0; i < studentCount; i++) {
+        tempStudents[i] = students[i];
+    }
+    
+    // 氣泡排序法（依平均成績由高到低排序）
+    for (int i = 0; i < studentCount - 1; i++) {
+        for (int j = 0; j < studentCount - 1 - i; j++) {
+            if (tempStudents[j].average < tempStudents[j + 1].average) {
+                Student temp = tempStudents[j];
+                tempStudents[j] = tempStudents[j + 1];
+                tempStudents[j + 1] = temp;
+            }
+        }
+    }
+    
+    printf("========== 成績排名 ==========\n");
+    printf("%-4s %-15s %-8s %-8s\n", "排名", "姓名", "學號", "平均成績");
+    printf("----------------------------------------\n");
+    
+    for (int i = 0; i < studentCount; i++) {
+        printf("%-4d %-15s %-8d %-8.1f\n", 
+               i + 1, tempStudents[i].name, 
+               tempStudents[i].studentId, tempStudents[i].average);
+    }
+    
+    printf("==================================\n");
+    printf("按任意鍵返回主選單...");
+    getchar();
+}
+
+// 功能e: 確認離開系統
+int confirmExit() {
+    char choice;
+    while (1) {
+        printf("確定離開？ (y/n): ");
+        scanf(" %c", &choice);
+        while (getchar() != '\n'); // 清除輸入緩衝區
+        
+        if (choice == 'y' || choice == 'Y') {
+            return 1; // 確定離開
+        } else if (choice == 'n' || choice == 'N') {
+            return 0; // 不離開，返回主選單
+        } else {
+            printf("請輸入 'y' 或 'n'！\n");
+        }
+    }
+}
+
 // 主程式
 int main() {
     // 顯示個人風格畫面
@@ -331,11 +392,31 @@ int main() {
                 searchStudentGrades();
                 break;
                 
+            case 'd':
+            case 'D':
+                gradeRanking();
+                break;
                 
+            case 'e':
+            case 'E':
+                if (confirmExit()) {
+                    printf("感謝使用簡易成績系統！再見！\n");
+                    return 0; // 正常結束程式
+                }
+                break;
+                
+            default:
+                printf("無效的選擇！請輸入 a-e 之間的選項。\n");
+                printf("按任意鍵繼續...");
+                getchar();
+                break;                
         }
     }
     
     return 0;
 }
 
-/*完成c選項*/
+/*完成d和e選項*/
+
+/*程式心得：更熟悉使用結構來儲存學生資料，也學到使用全域變數來儲存學生陣列和學生數量， 
+            並且對原本只在範例上看到的氣泡排序法有更實際的理解，讓我的基本功變得更加扎實*/

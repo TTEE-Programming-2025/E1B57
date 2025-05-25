@@ -217,7 +217,33 @@ void enterStudentGrades() {
     getchar(); // 等待使用者按鍵
 }
 
-
+// 功能b: 顯示所有學生成績
+void displayStudentGrades() {
+    clearScreen();
+    
+    if (studentCount == 0) {
+        printf("目前沒有學生資料！請先輸入學生成績。\n");
+        printf("按任意鍵返回主選單...");
+        getchar();
+        return;
+    }
+    
+    printf("========== 所有學生成績 ==========\n");
+    printf("%-15s %-8s %-6s %-6s %-6s %-8s\n", 
+           "姓名", "學號", "數學", "物理", "英文", "平均");
+    printf("------------------------------------------------\n");
+    
+    for (int i = 0; i < studentCount; i++) {
+        printf("%-15s %-8d %-6d %-6d %-6d %-8.1f\n", 
+               students[i].name, students[i].studentId,
+               students[i].math, students[i].physics, 
+               students[i].english, students[i].average);
+    }
+    
+    printf("================================================\n");
+    printf("按任意鍵返回主選單...");
+    getchar();
+}
 
 // 主程式
 int main() {
@@ -247,11 +273,15 @@ int main() {
                 enterStudentGrades();
                 break;
                 
-
+            case 'b':
+            case 'B':
+                displayStudentGrades();
+                break;
+                
         }
     }
     
     return 0;
 }
 
-/*修正程式接受空白姓名輸入的問題*/
+/*完成b選項*/

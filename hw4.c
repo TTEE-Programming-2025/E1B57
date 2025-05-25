@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h> 
 
 #define PASSWORD "2025"     
 #define MAX_TRIES 3         
@@ -24,6 +25,21 @@ int studentCount = 0;
 // 清除螢幕的函式
 void clearScreen() {
     system("cls");
+}
+
+// 檢查字串是否為空或只包含空白字元
+int isEmptyOrWhitespace(char *str) {
+    if (str == NULL || strlen(str) == 0) {
+        return 1; // 空字串
+    }
+    
+    // 檢查是否只包含空白字元
+    for (int i = 0; str[i] != '\0'; i++) {
+        if (!isspace(str[i])) {
+            return 0; // 找到非空白字元
+        }
+    }
+    return 1; // 只包含空白字元
 }
 
 // 顯示個人風格的歡迎畫面（至少20行）
@@ -124,10 +140,16 @@ void enterStudentGrades() {
     for (int i = 0; i < n; i++) {
         printf("\n--- 輸入第 %d 位學生資料 ---\n", i + 1);
         
-        // 輸入姓名
-        printf("姓名: ");
-        fgets(students[i].name, sizeof(students[i].name), stdin);
-        students[i].name[strcspn(students[i].name, "\n")] = 0; // 移除換行符
+        // 輸入姓名（加入空白檢查）
+        do {
+            printf("姓名: ");
+            fgets(students[i].name, sizeof(students[i].name), stdin);
+            students[i].name[strcspn(students[i].name, "\n")] = 0; // 移除換行符
+            
+            if (isEmptyOrWhitespace(students[i].name)) {
+                printf("姓名不能為空白！請重新輸入。\n");
+            }
+        } while (isEmptyOrWhitespace(students[i].name));
         
         // 輸入學號（6位數）
         do {
@@ -195,6 +217,8 @@ void enterStudentGrades() {
     getchar(); // 等待使用者按鍵
 }
 
+
+
 // 主程式
 int main() {
     // 顯示個人風格畫面
@@ -222,6 +246,7 @@ int main() {
             case 'A':
                 enterStudentGrades();
                 break;
+                
 
         }
     }
@@ -229,4 +254,4 @@ int main() {
     return 0;
 }
 
-/*完成密碼驗證和選項a */
+/*修正程式接受空白姓名輸入的問題*/
